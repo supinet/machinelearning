@@ -12,6 +12,13 @@ Ydummies_df = Y_df # quando tem somente uma coluna
 X = Xdummies_df.values
 Y = Ydummies_df.values
 
+#effectiveness test chuta tudo 0 ou 1
+hits_of_one = sum(Y)
+hits_of_zero = len(Y) - hits_of_one
+base_hits_rate = 100.0 * max(hits_of_one, hits_of_zero) / len(Y)
+print('Base hits rate: %f' % base_hits_rate)
+
+
 fit_percentage = 0.9
 
 #tamaho de treino 90% da coluna de comprou
@@ -41,6 +48,6 @@ total_elements = len(test_data)
 
 hits_rate = 100.0 * total_hits / total_elements
 
-print(hits_rate)
+print('Algorithm Base hits rate: %f' % hits_rate)
 print(total_elements)
 
