@@ -13,8 +13,8 @@ X = Xdummies_df.values
 Y = Ydummies_df.values
 
 #effectiveness test chuta tudo 0 ou 1
-hits_of_one = sum(Y)
-hits_of_zero = len(Y) - hits_of_one
+hits_of_one = len(Y[Y=='sim'])
+hits_of_zero = len(Y[Y=='nao'])
 base_hits_rate = 100.0 * max(hits_of_one, hits_of_zero) / len(Y)
 print('Base hits rate: %f' % base_hits_rate)
 
@@ -40,10 +40,11 @@ model = MultinomialNB()
 model.fit(fit_data, fit_demarcation)
 
 result = model.predict(test_data)
-differences = result - test_demarcation
+hits = (result == test_demarcation)
 
-hits = [d for d in differences if d == 0]
-total_hits = len(hits)
+# isn't necessary anymore
+#hits = [d for d in differences if d == 0]
+total_hits = sum(hits)
 total_elements = len(test_data)
 
 hits_rate = 100.0 * total_hits / total_elements
