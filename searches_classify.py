@@ -1,3 +1,4 @@
+from collections import Counter
 import pandas as pd
 
 df = pd.read_csv('busca.csv')
@@ -13,9 +14,9 @@ X = Xdummies_df.values
 Y = Ydummies_df.values
 
 #effectiveness test chuta tudo 0 ou 1
-hits_of_one = len(Y[Y=='sim'])
-hits_of_zero = len(Y[Y=='nao'])
-base_hits_rate = 100.0 * max(hits_of_one, hits_of_zero) / len(Y)
+base_hits = max(Counter(Y).itervalues())
+
+base_hits_rate = 100.0 * base_hits / len(Y)
 print('Base hits rate: %f' % base_hits_rate)
 
 
