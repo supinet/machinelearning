@@ -14,20 +14,28 @@ Ydummies_df = Y_df # quando tem somente uma coluna
 X = Xdummies_df.values
 Y = Ydummies_df.values
 
-fit_percentage = 0.9
+fit_percentage = 0.8
+test_percentage = 0.1
 
 #tamaho de treino 90% da coluna de comprou
 #testes 100 registros = 10%
 fit_length = fit_percentage * len(Y)
-test_length = len(Y) - fit_length
+test_length = test_percentage * len(Y)
+validation_length = len(Y) - fit_length - test_length
 
-#dados do treino e #demarcation
-fit_data = X[:int(fit_length)]
-fit_demarcation = Y[:int(fit_length)]
+#dados do treino e #demarcation 0 until 799
+fit_data = X[0:int(fit_length)]
+fit_demarcation = Y[0:int(fit_length)]
 
-#test
-test_data = X[-int(test_length):]
-test_demarcation = Y[-int(test_length):]
+#test 800 until 899
+fit_end = (fit_length + test_length)
+test_data = X[int(test_length):int(fit_end)]
+test_demarcation = Y[int(test_length):int(fit_end)]
+
+#test validation 999 until 999
+#validation_data = 
+#validation_demarcation = 
+
 
 def fit_and_predict(name, model, fit_data, fit_demarcation, test_data, test_demarcation):
     model.fit(fit_data, fit_demarcation)
