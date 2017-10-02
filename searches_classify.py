@@ -2,7 +2,7 @@ from collections import Counter
 import pandas as pd
 
 #df = pd.read_csv('busca.csv')
-df = pd.read_csv('busca2.csv')
+df = pd.read_csv('busca.csv')
 
 #df = dataFrame
 X_df = df[['home', 'busca', 'logado']]
@@ -29,7 +29,7 @@ fit_demarcation = Y[:int(fit_length)]
 test_data = X[-int(test_length):]
 test_demarcation = Y[-int(test_length):]
 
-def fit_and_predict(model, fit_data, fit_demarcation, test_data, test_demarcation):
+def fit_and_predict(name, model, fit_data, fit_demarcation, test_data, test_demarcation):
     model.fit(fit_data, fit_demarcation)
 
     result = model.predict(test_data)
@@ -42,19 +42,20 @@ def fit_and_predict(model, fit_data, fit_demarcation, test_data, test_demarcatio
 
     hits_rate = 100.0 * total_hits / total_elements
 
-    print('Algorithm Base hits rate: %f' % hits_rate)
+    msg = "Algorithm Base hits rate do {0}: {1}".format(name, hits_rate)
+    print(msg)
 
 from sklearn.naive_bayes import MultinomialNB
 model = MultinomialNB()
-fit_and_predict(model, fit_data, fit_demarcation, test_data, test_demarcation)
+fit_and_predict("MultinomialNB", model, fit_data, fit_demarcation, test_data, test_demarcation)
 
 from sklearn.ensemble import AdaBoostClassifier
 model = AdaBoostClassifier()
-fit_and_predict(model, fit_data, fit_demarcation, test_data, test_demarcation)
+fit_and_predict("AdaBoostClassifier", model, fit_data, fit_demarcation, test_data, test_demarcation)
 
 #effectiveness test chuta um unico valor
 base_hits = max(Counter(test_demarcation).itervalues())
 
 base_hits_rate = 100.0 * base_hits / len(test_demarcation)
 print('Base hits rate: %f' % base_hits_rate)
-print("Total tests: %f " % len(test_data))
+print("Total tests: %d " % len(test_data))
