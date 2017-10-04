@@ -1,15 +1,20 @@
 from collections import Counter
 import pandas as pd
 
-#df = pd.read_csv('busca.csv')
-df = pd.read_csv('busca.csv')
+# teste inicial: home, busca, logado => comprou
+# home, busca
+# home, logado
+# busca, logado
+# busca: 85,71% (7 testes)
 
-#df = dataFrame
+#make read of csv
+df = pd.read_csv('busca.csv')
+# df = pd.read_csv('busca2.csv')
 X_df = df[['home', 'busca', 'logado']]
 Y_df = df['comprou']
 
 Xdummies_df = pd.get_dummies(X_df).astype(int)
-Ydummies_df = Y_df # quando tem somente uma coluna
+Ydummies_df = Y_df # when has only one column
 
 X = Xdummies_df.values
 Y = Ydummies_df.values
@@ -19,32 +24,31 @@ test_percentage = 0.1
 
 #tamaho de treino 90% da coluna de comprou
 #testes 100 registros = 10%
-fit_length = fit_percentage * len(Y)
+fit_length = int(fit_percentage * len(Y))
 test_length = test_percentage * len(Y)
 validation_length = len(Y) - fit_length - test_length
 
 #dados do treino e #demarcation 0 until 799
-fit_data = X[0:int(fit_length)]
-fit_demarcation = Y[0:int(fit_length)]
+fit_data = X[:fit_length]
+fit_demarcation = Y[:fit_length]
+
+fit_end = fit_length + test_length
 
 #test 800 until 899
-fit_end = (fit_length + test_length)
-test_data = X[int(test_length):int(fit_end)]
-test_demarcation = Y[int(test_length):int(fit_end)]
+test_data = X[int(fit_length):int(fit_end)]
+test_demarcation = Y[int(fit_length): int(fit_end)]
 
 #test validation 999 until 999
-#validation_data = 
-#validation_demarcation = 
+validation_data = X[int(fit_end):]
+validation_demarcation = Y[int(fit_end):]
 
 
 def fit_and_predict(name, model, fit_data, fit_demarcation, test_data, test_demarcation):
     model.fit(fit_data, fit_demarcation)
 
     result = model.predict(test_data)
-    hits = (result == test_demarcation)
+    hits = result == test_demarcation
 
-    # isn't necessary anymore
-    #hits = [d for d in differences if d == 0]
     total_hits = sum(hits)
     total_elements = len(test_data)
 
@@ -52,18 +56,38 @@ def fit_and_predict(name, model, fit_data, fit_demarcation, test_data, test_dema
 
     msg = "Algorithm Base hits rate do {0}: {1}".format(name, hits_rate)
     print(msg)
+    return hits_rate
+
+def real_test(model, validation_data, validation_demarcation):
+    result = model.predict(validation_data)
+    hits = result == validation_demarcation
+
+    total_hits = sum(hits)
+    total_elements = len(validation_demarcation)
+
+    hits_rate = 100 * total_hits / total_elements
+    msg = "Rate of hits between winners two algorithms on real world: {0}".format(hits_rate)
+    print(msg)
 
 from sklearn.naive_bayes import MultinomialNB
-model = MultinomialNB()
-fit_and_predict("MultinomialNB", model, fit_data, fit_demarcation, test_data, test_demarcation)
+modelMultinomial = MultinomialNB()
+multinomialResult = fit_and_predict("MultinomialNB", modelMultinomial, fit_data, fit_demarcation, test_data, test_demarcation)
 
 from sklearn.ensemble import AdaBoostClassifier
-model = AdaBoostClassifier()
-fit_and_predict("AdaBoostClassifier", model, fit_data, fit_demarcation, test_data, test_demarcation)
+modelAdaboost = AdaBoostClassifier()
+adaboostResult = fit_and_predict("AdaBoostClassifier", modelAdaboost, fit_data, fit_demarcation, test_data, test_demarcation)
+
+if multinomialResult > adaboostResult :
+    winner = modelMultinomial
+else:
+    winner = modelMultinomial
+
+real_test(winner, validation_data, validation_demarcation)
 
 #effectiveness test chuta um unico valor
-base_hits = max(Counter(test_demarcation).itervalues())
-
-base_hits_rate = 100.0 * base_hits / len(test_demarcation)
+base_hits = max(Counter(validation_demarcation).itervalues())
+base_hits_rate = 100.0 * base_hits / len(validation_demarcation)
 print('Base hits rate: %f' % base_hits_rate)
-print("Total tests: %d " % len(test_data))
+
+total_elements = len(validation_data)
+print("Total tests: %d " % total_elements)
