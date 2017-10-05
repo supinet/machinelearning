@@ -7,6 +7,8 @@ import pandas as pd
 # busca, logado
 # busca: 85,71% (7 testes)
 
+#strategy: 80% fit, 10% test, 10% validation
+
 #make read of csv
 df = pd.read_csv('busca.csv')
 # df = pd.read_csv('busca2.csv')
